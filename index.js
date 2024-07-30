@@ -17,7 +17,61 @@ app.use(express.json());
 // -----------------------------------------
 // Ruta Principal
 app.get("/", (req, res) => {
-    res.send("Bienvenido al server de pelis use server/api/");
+    //res.send("Bienvenido al server de pelis use server/api/");
+    const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bienvenido al Server de Pelis</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            h1 {
+                color: #2c3e50;
+            }
+            .api-link {
+                display: inline-block;
+                background-color: #3498db;
+                color: white;
+                padding: 10px 20px;
+                text-decoration: none;
+                border-radius: 5px;
+                margin-top: 20px;
+            }
+            .api-link:hover {
+                background-color: #2980b9;
+            }
+        </style>
+    </head>
+    <body>
+        <img src="./einstein.png" />
+        <h1>Bienvenido al Server de Pelis</h1>
+        <p>Este es el servidor principal para el servicio de películas.</p>
+        <p>Para acceder a la API, utiliza el siguiente enlace:</p>
+        <a href="/api/pelis" class="api-link">Ir a la API</a>
+
+        <h2>Lista de endpoints</h2>
+        <ul>
+        <li><a href="/api/pelis">/api/pelis</a>GET - Obtener todas las películas</li>
+        <li><a href="/api/pelis/:id">/api/pelis/:id</a>GET - Obtener una película</li>
+        <li><a href="/api/pelis">/api/pelis</a>POST - Crear una película</li>
+        <li><a href="/api/pelis/:id">/api/pelis/:id</a>PUT - Actualizar una película</li>
+        <li><a href="/api/pelis/:id">/api/pelis/:id</a>DELETE - Eliminar una película</li>
+        </ul>
+    </body>
+    </html>
+    `;
+
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
 });
 
 // -----------------------------------------
@@ -58,9 +112,7 @@ app.post('/api/login', async (req, res) => {
 // -----------------------------------------
 // Obtener todas las películas
 app.get('/api/pelis', async (req, res) => {
-    const pelis = await prisma.pelicula.findMany({
-        wgere
-    });
+    const pelis = await prisma.pelicula.findMany();
     res.json(pelis);
 });
 
@@ -74,7 +126,7 @@ app.get('/api/pelis/:id', async (req, res) => {
 // Crear una película
 app.post('/api/pelis', async (req, res) => {
     const { titulo, imagen, idUsuario, director } = req.body;
-    
+
     console.log("Creando pelicula: ", titulo, imagen, idUsuario, director);
 
     try {
@@ -88,23 +140,23 @@ app.post('/api/pelis', async (req, res) => {
     }
 });
 
-// // Actualizar una película
-// app.put('/api/movies/:id', async (req, res) => {
-//     const { id } = req.params;
-//     const { title, imageUrl, watched } = req.body;
-//     const movie = await prisma.movie.update({
-//         where: { id: Number(id) },
-//         data: { title, imageUrl, watched },
-//     });
-//     res.json(movie);
-// });
+// Actualizar una película
+app.put('/api/pelis/:id', async (req, res) => {
+    const { id } = req.params;
+    const { titulo, imagen, isVista } = req.body;
+    const pelicula = await prisma.pelicula.update({
+        where: { id: Number(id) },
+        data: { titulo, imagen, isVista },
+    });
+    res.json(pelicula);
+});
 
-// // Eliminar una película
-// app.delete('/api/movies/:id', async (req, res) => {
-//     const { id } = req.params;
-//     await prisma.movie.delete({ where: { id: Number(id) } });
-//     res.json({ message: 'Película eliminada' });
-// });
+// Eliminar una película
+app.delete('/api/pelis/:id', async (req, res) => {
+    const { id } = req.params;
+    await prisma.pelicula.delete({ where: { id: Number(id) } });
+    res.json({ message: 'Película eliminada' });
+});
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor de pelis en http://192.168.1.102:${PORT}`));
+app.listen(PORT, () => console.log(`Servidor de pelis en http://localhost:${PORT}`));
