@@ -25,3 +25,13 @@ npm install
 # Restart your Node.js application (adjust this command based on your setup)
 pm2 restart app-name
 ```
+
+Mi server requiere app.cjs para poder correr ES en vez de commonJS. Es problema de mi phusion passenger. 
+    
+```js
+import('./index.js').then(module => {
+    // Tu aplicación se inicia aquí
+}).catch(err => {
+    console.error('Failed to load the application:', err);
+});
+```
