@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
         </style>
     </head>
     <body>
-        <img src="./einstein.png" />
+        <img src="./images/einstein.png" />
         <h1>Bienvenido al Server de Pelis</h1>
         <p>Este es el servidor principal para el servicio de películas.</p>
         <p>Para acceder a la API, utiliza el siguiente enlace:</p>
@@ -60,11 +60,11 @@ app.get("/", (req, res) => {
 
         <h2>Lista de endpoints</h2>
         <ul>
-        <li><a href="/api/pelis">/api/pelis</a>GET - Obtener todas las películas</li>
-        <li><a href="/api/pelis/:id">/api/pelis/:id</a>GET - Obtener una película</li>
-        <li><a href="/api/pelis">/api/pelis</a>POST - Crear una película</li>
-        <li><a href="/api/pelis/:id">/api/pelis/:id</a>PUT - Actualizar una película</li>
-        <li><a href="/api/pelis/:id">/api/pelis/:id</a>DELETE - Eliminar una película</li>
+        <li><a href="/api/pelis">/api/pelis</a> GET - Obtener todas las películas</li>
+        <li><a href="/api/pelis/:id">/api/pelis/:id</a> GET - Obtener una película</li>
+        <li><a href="/api/pelis">/api/pelis</a> POST - Crear una película</li>
+        <li><a href="/api/pelis/:id">/api/pelis/:id</a> PUT - Actualizar una película</li>
+        <li><a href="/api/pelis/:id">/api/pelis/:id</a> DELETE - Eliminar una película</li>
         </ul>
     </body>
     </html>
