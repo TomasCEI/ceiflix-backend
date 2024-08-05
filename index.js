@@ -4,13 +4,20 @@
 
 import cors from 'cors';
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// import { PrismaClient } from '@prisma/client';
+// const prisma = new PrismaClient();
+
+// Uso configuración avanzada de prisma
+import prisma from './db.js'
+import prismaErrorHandler from './middleware/prismaErrorHandler.js'
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+
 
 // -----------------------------------------
 // -           Rutas De la Web             -
@@ -112,15 +119,26 @@ app.post('/api/login', async (req, res) => {
 // -----------------------------------------
 // Obtener todas las películas
 app.get('/api/pelis', async (req, res) => {
-    const pelis = await prisma.pelicula.findMany();
-    res.json(pelis);
+    try {
+        const pelicula = await prisma.pelicula.findMany();
+        res.json(pelicula);
+    } catch (error) {
+        console.error('Error en la operación de Prisma:', error);
+        next(error); // Pasa el error al siguiente middleware
+    }
 });
 
 // Obtener una película
 app.get('/api/pelis/:id', async (req, res) => {
     const { id } = req.params;
-    const pelicula = await prisma.pelicula.findUnique({ where: { id: Number(id) } });
-    res.json(pelicula);
+
+    try {
+        const pelicula = await prisma.pelicula.findUnique({ where: { id: Number(id) } });
+        res.json(pelicula);
+    } catch (error) {
+        console.error('Error en la operación de Prisma:', error);
+        next(error); // Pasa el error al siguiente middleware
+    }
 });
 
 // Crear una película
@@ -159,10 +177,35 @@ app.delete('/api/pelis/:id', async (req, res) => {
 });
 
 
+// -----------------------------------------------------
+// Crucial que middleware de errores vayan al final
+// -----------------------------------------------------
+
+// Usa el manejador de errores de Prisma antes de tu manejador de errores general
+app.use(prismaErrorHandler)
+
+// app.use((err, req, res, next) => {
+//     if (err instanceof prisma.PrismaClientKnownRequestError) {
+//         // Manejar errores específicos de Prisma
+//         console.error('Error de Prisma:', err);
+//         res.status(500).send('Error en la base de datos');
+//     } else {
+//         // Otros errores
+//         console.error(err.stack);
+//         res.status(500).send('Something broke amigo!!');
+//     }
+//});
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(500).send('Something broke amigo!!');
 });
+app.use((req, res, next) => {
+    res.status(404).send('No encontré la pagina que me pedis amigo!');
+});
+
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor de pelis en http://localhost:${PORT}`));

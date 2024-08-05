@@ -1,3 +1,6 @@
+# Setup
+
+
 ```bash
 bun init
 bun i prisma -d
@@ -26,6 +29,8 @@ npm install
 pm2 restart app-name
 ```
 
+## info para el deploy en Plesk (passenger phusion)
+
 Mi server requiere app.cjs para poder correr ES en vez de commonJS. Es problema de mi phusion passenger. 
     
 ```js
@@ -34,4 +39,33 @@ import('./index.js').then(module => {
 }).catch(err => {
     console.error('Failed to load the application:', err);
 });
+```
+
+Si quisera configurar el nginx para especificar un puerto como reverse-proxy debería agregar el código:
+
+```nginx
+
+// ChatGPT
+
+location / {
+    proxy_pass http://localhost:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+}
+
+// o este otro (Claude)
+location / {
+	proxy_pass http://127.0.0.1:3001;
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection 'upgrade';
+	proxy_set_header Host $host;
+	proxy_cache_bypass $http_upgrade;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+}
 ```
